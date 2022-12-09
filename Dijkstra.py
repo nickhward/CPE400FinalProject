@@ -8,7 +8,6 @@ class Dijkstra(object):
   def run(self, pSource, pUnvisited, graph):
     self.source = none    #clear any previous data stored in the class members
     self.unvisited.clear()
-    self.edges.clear()
     self.shortest_nodes.clear()
     self.shortest_paths.clear()
     
