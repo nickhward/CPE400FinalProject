@@ -2,6 +2,7 @@ import networkx as nx
 import matplotlib.pyplot as plt #for displaying graph
 import sys
 import random
+import csv
 
 def mainMenu(graph, failures):
     
@@ -54,6 +55,13 @@ def main():
     #array of failure percentages
     failures = [.05, .2, .45, .5, .03, .18, .56, .63, .32, .11, .60, .23, .79, .85, 1.0, .39]
     #Base graph with added edges and weights--> P = destination for dijkstra
+    with open('graphVals.csv', 'r') as file:
+        csvreader = csv.reader(file)
+        for row in csvreader:
+            print(row)
+            G.add_edge(row[0], row[1], weight=row[2])
+
+    '''
     G.add_edge("A", "B", weight=5)
     G.add_edge("B", "C", weight=15)
     G.add_edge("B", "E", weight=3)
@@ -73,7 +81,7 @@ def main():
     G.add_edge("M", "O", weight=9)
     G.add_edge("N", "P", weight=6)
     G.add_edge("O", "P", weight=5)
-
+    '''
     #call the main menu
     mainMenu(G, failures)
 

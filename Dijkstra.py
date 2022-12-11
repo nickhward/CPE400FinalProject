@@ -1,12 +1,14 @@
+import networkx as nx
+
 class Dijkstra(object):
   def _init_(self):
-    self.source = none
-    self.unvisited = none
-    self.shortest_nodes = none #the adjacent node to the source needed to take the shortest path to the destination
-    self.shortest_paths = none
+    self.source = None
+    self.unvisited = None
+    self.shortest_nodes = None #the adjacent node to the source needed to take the shortest path to the destination
+    self.shortest_paths = None
     
   def run(self, pSource, pUnvisited, graph):
-    self.source = none    #clear any previous data stored in the class members
+    self.source = None    #clear any previous data stored in the class members
     self.unvisited.clear()
     self.shortest_nodes.clear()
     self.shortest_paths.clear()
