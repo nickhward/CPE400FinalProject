@@ -8,6 +8,16 @@ class Dijkstra(object):
     self.shortest_paths = None
     
   def run(self, pSource, pUnvisited, graph):
+    """_summary_
+
+    Args:
+        pSource (_type_): _description_
+        pUnvisited (_type_): _description_
+        graph (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     self.source = None    #clear any previous data stored in the class members
     self.unvisited.clear()
     self.shortest_nodes.clear()
@@ -43,7 +53,12 @@ class Dijkstra(object):
     return self.shortest_nodes #to save on memory, the algorithm only returns the first node in the path to any destination
       
   def adjacent_nodes(self, node, graph):
+    """_summary_
 
+    Args:
+        node (_type_): _description_
+        graph (_type_): _description_
+    """
     #identify adacent nodes and the cost to travel to them, ignore source node
     adjacencies = nx.neighbors(graph, node)
     #add the current node's shortest_path and the cost to travel to the adjacent nodes and make that the 
@@ -55,6 +70,13 @@ class Dijkstra(object):
     #if current node is adjacent to the source, set corresponding shortest_node to itself, otherwise set it to current node's shortest_node
     
   def compare_costs(self, source, neighbor, graph):
+    """_summary_
+
+    Args:
+        source (_type_): _description_
+        neighbor (_type_): _description_
+        graph (_type_): _description_
+    """
     weights = nx.get_edge_attributes(graph, "weight")
     added_cost = self.shortest_paths[source] + weights[(source,neighbor)]
     if( added_cost < self.shortest_paths[neighbor]):

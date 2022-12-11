@@ -40,6 +40,12 @@ def mainMenu(graph, failures):
     
  
 def simulation(graph, failures):
+    """_summary_
+
+    Args:
+        graph (_type_): _description_
+        failures (_type_): _description_
+    """
     print("Inside of simulation")
     randomFailures = []
     i =0
@@ -53,6 +59,11 @@ def simulation(graph, failures):
     print("Random Failures array: ", randomFailures)
 
 def simulate_failure(probability):
+    """_summary_
+
+    Args:
+        probability (_type_): _description_
+    """
      # Generate a random number between 0 and 1
     rand_num = np.random.random()
     
@@ -65,6 +76,7 @@ def simulate_failure(probability):
 
 
 def main():
+    """_summary_"""
     print("In main")
     #creating an empty graph
     G = nx.Graph()
