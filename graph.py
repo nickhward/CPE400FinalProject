@@ -2,6 +2,9 @@ import networkx as nx
 import matplotlib.pyplot as plt #for displaying graph
 import sys
 import random
+import numpy as np
+import matplotlib.pyplot as plt
+
 import csv
 
 def mainMenu(graph, failures):
@@ -18,6 +21,12 @@ def mainMenu(graph, failures):
             #continue
         if user == "1":
             #call the simulation
+            pos=nx.spring_layout(graph)
+            nx.draw_networkx(graph,pos)
+            labels = nx.get_edge_attributes(graph,'weight')
+            nx.draw_networkx_edge_labels(graph,pos,edge_labels=labels)
+            plt.savefig("simulated_graph.png")
+                        
             print("User chose 1")
             simulation(graph, failures)
         elif user == "2":
@@ -29,13 +38,7 @@ def mainMenu(graph, failures):
     #user = input("Response: ")
     #spring_layout = a dictionary where the nodes are the keys and their positions are values
     
-    
-    nx.draw(graph, pos=nx.spring_layout(graph), with_labels=True, font_weight='bold')
-    labels = nx.get_edge_attributes(graph, 'weight') #defining edge labels to be the weights in the graph
-    nx.draw_networkx_edge_labels(graph, pos=nx.spring_layout(graph), edge_labels=labels) #prints graph with weights
-    nx.draw_networkx_edges(graph,pos=nx.spring_layout(graph),width=4, edge_color='g', arrows=False)
-
-    plt.show()
+ 
 def simulation(graph, failures):
     print("Inside of simulation")
     randomFailures = []
@@ -48,42 +51,40 @@ def simulation(graph, failures):
         randomFailures.append(fail)
         i += 1
     print("Random Failures array: ", randomFailures)
+
+def simulate_failure(probability):
+     # Generate a random number between 0 and 1
+    rand_num = np.random.random()
+    
+    # If the random number is less than the given probability,
+    # the node/link is considered failed
+    if rand_num < probability:
+        return True
+    else:
+        return False
+
+
 def main():
     print("In main")
     #creating an empty graph
     G = nx.Graph()
     #array of failure percentages
-    failures = [.05, .2, .45, .5, .03, .18, .56, .63, .32, .11, .60, .23, .79, .85, 1.0, .39]
+    failures = [.05, .2, .45, .5, .03, .18, .56, .63, .32, .11, .60, .23, .79, .85, 0.9, .39]
+    nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P']
     #Base graph with added edges and weights--> P = destination for dijkstra
+
+    for node in nodes:
+        G.add_node(node)
+
     with open('graphVals.csv', 'r') as file:
         csvreader = csv.reader(file)
         for row in csvreader:
-            print(row)
             G.add_edge(row[0], row[1], weight=row[2])
 
-    '''
-    G.add_edge("A", "B", weight=5)
-    G.add_edge("B", "C", weight=15)
-    G.add_edge("B", "E", weight=3)
-    G.add_edge("E", "F", weight=9)
-    G.add_edge("C", "F", weight=20)
-    G.add_edge("F", "I", weight=1)
-    G.add_edge("E", "D", weight=8)
-    G.add_edge("D", "G", weight=12)
-    G.add_edge("E", "H", weight=4)
-    G.add_edge("G", "H", weight=9)
-    G.add_edge("H", "J", weight=6)
-    G.add_edge("J", "K", weight=7)
-    G.add_edge("K", "L", weight=2)
-    G.add_edge("L", "M", weight=1)
-    G.add_edge("L", "N", weight=5)
-    G.add_edge("K", "N", weight=1)
-    G.add_edge("M", "O", weight=9)
-    G.add_edge("N", "P", weight=6)
-    G.add_edge("O", "P", weight=5)
-    '''
+    
     #call the main menu
     mainMenu(G, failures)
+
 
 
 #calling main

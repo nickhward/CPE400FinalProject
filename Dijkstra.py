@@ -16,7 +16,7 @@ class Dijkstra(object):
     self.source = pSource   #insert parameters' data in members
     self.unvisited = pUnvisited
     self.shortest_nodes = dict.fromkeys(pUnvisited)
-    self.shortest_paths = dict.fromkeys(pUnvisited, 10000) #10000 is infinity for our purposes
+    self.shortest_paths = dict.fromkeys(pUnvisited, float("inf")) #10000 is infinity for our purposes
     self.shortest_nodes[self.source] = self.source
     self.shortest_paths[self.source] = 0
     current_node = self.source
@@ -29,8 +29,8 @@ class Dijkstra(object):
       for x in adjacencies:
         if x in self.unvisited:
           nodes_to_check.append(x)
-      next_path = 10000
-      next_node = 'a'
+      next_path = float("inf")
+      next_node = 'A'
       for y in nodes_to_check:
         if(self.shortest_paths[y] < next_path):
           next_path = self.shortest
@@ -43,6 +43,7 @@ class Dijkstra(object):
     return self.shortest_nodes #to save on memory, the algorithm only returns the first node in the path to any destination
       
   def adjacent_nodes(self, node, graph):
+
     #identify adacent nodes and the cost to travel to them, ignore source node
     adjacencies = nx.neighbors(graph, node)
     #add the current node's shortest_path and the cost to travel to the adjacent nodes and make that the 
