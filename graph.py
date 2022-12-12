@@ -4,10 +4,11 @@ import sys
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+from Dijkstra import Dijkstra
 
 import csv
 
-def mainMenu(graph, failures):
+def mainMenu(graph, graph2, failures):
     
     #print("Hello!\n What would you like to do?")
     #print("Press 1 for Run simulation")
@@ -22,7 +23,7 @@ def mainMenu(graph, failures):
         if user == "1":
             #call the simulation           
             print("User chose 1")
-            simulation(graph, failures)
+            simulation(graph, graph2, failures)
         elif user == "2":
             sys.exit("Bye!")
 
@@ -33,7 +34,7 @@ def mainMenu(graph, failures):
     #spring_layout = a dictionary where the nodes are the keys and their positions are values
     
  
-def simulation(graph, failures):
+def simulation(graph, graph2, failures):
     """_summary_
 
     Args:
@@ -84,44 +85,53 @@ def simulation(graph, failures):
     
     #getting list of nodes to retrieve the node at the founded index that had the largest failure difference
     nodeList = list(graph.nodes)
-    node = nodeList[idx]
-    print("Node want to delete: ", node)
+    failed_node = nodeList[idx]
+    print("Node want to delete: ", failed_node)
     #removing node
-    graph.remove_node(node)
+    #graph.remove_node(node)
 
     #printing new graph with removed node
     #***ADD HERE HOW TO RECONNECT GRAPH WITH DIJKSTRA and will print the graph with node removed and it being reconnected***
-    pos=nx.spring_layout(graph)
-    nx.draw_networkx(graph,pos)
-    labels = nx.get_edge_attributes(graph,'weight')
-    nx.draw_networkx_edge_labels(graph,pos,edge_labels=labels)
-    plt.savefig("simulated_graph.png")
 
-#def simulate_failure(probability):
-    """_summary_
+    run_dijkstras(graph, graph2, nodeList, failed_node)
 
-    Args:
-        probability (_type_): _description_
-    """
-     # Generate a random number between 0 and 1
-    #rand_num = np.random.random()
+def run_dijkstras(graph, graph2, nodeList, failed_node):
+    dj = Dijkstra()
+    nodeList.remove(failed_node)
+    nodeListGraph2 = list(graph2.nodes)
+    firstNodes = dict.fromkeys(nodeList)
+
+    firstNodesGraph2 = dict.fromkeys(nodeListGraph2)
+
+
+    #graph_new = graph
+    graph.remove_node(failed_node)
+
+    ##testing strategy 1
+    for node in nodeList:
+        firstNodes[node] = dj.run(node, nodeList, graph)
     
-    # If the random number is less than the given probability,
-    # the node/link is considered failed
-    #if rand_num < probability:
-        #return True
-    #else:
-        #return False
+    print(f'For Strat 1: {firstNodes}')
+    print()
 
+    firstNodes.clear()
+
+    adjacent_nodes = nx.neighbors(graph2, failed_node)
+    for node in adjacent_nodes:
+        firstNodesGraph2[node] = dj.run(node, nodeListGraph2, graph2)
+    
+    print(f'For Strat 2: {firstNodesGraph2}')
 
 def main():
     """_summary_"""
     print("In main")
     #creating an empty graph
     G = nx.Graph()
+    graph2 = nx.Graph()
     #array of failure percentages
     failures = [.05, .2, .45, .5, .03, .18, .56, .63, .32, .11, .60, .23, .79, .85, 0.9, .39]
     nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P']
+    #nodes = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
     #Base graph with added edges and weights--> P = destination for dijkstra
 
     for node in nodes:
@@ -131,10 +141,16 @@ def main():
         csvreader = csv.reader(file)
         for row in csvreader:
             G.add_edge(row[0], row[1], weight=row[2])
+            graph2.add_edge(row[0], row[1], weight=row[2])
 
-    
+    pos=nx.spring_layout(G)
+    nx.draw_networkx(G,pos)
+    labels = nx.get_edge_attributes(G,'weight')
+    nx.draw_networkx_edge_labels(G,pos,edge_labels=labels)
+    plt.savefig("simulated_graph.png")
+
     #call the main menu
-    mainMenu(G, failures)
+    mainMenu(G, graph2, failures)
 
 
 

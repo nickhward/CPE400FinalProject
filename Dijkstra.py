@@ -1,7 +1,7 @@
 import networkx as nx
 
 class Dijkstra(object):
-  def _init_(self):
+  def __init__(self):
     self.source = None
     self.unvisited = None
     self.shortest_nodes = None #the adjacent node to the source needed to take the shortest path to the destination
@@ -19,9 +19,10 @@ class Dijkstra(object):
         _type_: _description_
     """
     self.source = None    #clear any previous data stored in the class members
-    self.unvisited.clear()
-    self.shortest_nodes.clear()
-    self.shortest_paths.clear()
+    self.unvisited = None
+    self.shortest_nodes = None
+    self.shortest_paths = None
+    
     
     self.source = pSource   #insert parameters' data in members
     self.unvisited = pUnvisited
@@ -32,8 +33,9 @@ class Dijkstra(object):
     current_node = self.source
     nodes_to_check = []
     
+    
     while(len(self.unvisited) > 0):
-      self.unvisited.pop(current_node)
+      self.unvisited.remove(current_node)
       self.adjacent_nodes(current_node, graph)
       adjacencies = nx.neighbors(graph, current_node)
       for x in adjacencies:
@@ -42,10 +44,12 @@ class Dijkstra(object):
       next_path = float("inf")
       next_node = 'A'
       for y in nodes_to_check:
-        if(self.shortest_paths[y] < next_path):
-          next_path = self.shortest
+        
+        if(self.shortest_paths[y] < next_path and y in self.unvisited):
+          next_path = self.shortest_paths[y]
           next_node = y
-      nodes_to_check.pop(next_node)
+      
+      if len(self.unvisited) != 0: nodes_to_check.remove(next_node)
       current_node = next_node
       
       #take a currently unvisited node whose path is the shortest and call adjacent_nodes, removes node from unvisited list
@@ -77,8 +81,10 @@ class Dijkstra(object):
         neighbor (_type_): _description_
         graph (_type_): _description_
     """
-    weights = nx.get_edge_attributes(graph, "weight")
-    added_cost = self.shortest_paths[source] + weights[(source,neighbor)]
+    weight = graph.get_edge_data(source, neighbor)
+
+    added_cost = self.shortest_paths[source] + int(weight['weight'])
+    
     if( added_cost < self.shortest_paths[neighbor]):
       self.shortest_paths[neighbor] = added_cost
       if neighbor in nx.neighbors(graph, self.source):
