@@ -96,6 +96,7 @@ def simulation(graph: nx.Graph, graph2: nx.Graph, failures: List):
     
     #getting list of nodes to retrieve the node at the founded index that had the largest failure difference
     nodeList = list(graph.nodes)
+
     failed_node = nodeList[idx]
     print("Node want to delete: ", failed_node)
     #removing node
@@ -105,6 +106,21 @@ def simulation(graph: nx.Graph, graph2: nx.Graph, failures: List):
     #***ADD HERE HOW TO RECONNECT GRAPH WITH DIJKSTRA and will print the graph with node removed and it being reconnected***
 
     run_dijkstras(graph, graph2, nodeList, failed_node)
+
+def initial_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, firstNodes, firstNodesGraph2):
+    dj1 = Dijkstra()
+    dj2 = Dijkstra()
+    
+    nodeListGraph2 = list(graph2.nodes)
+    
+
+    for node in nodeList:
+        firstNodes[node] = dj1.run(node, nodeList, graph)
+
+    for node in nodeListGraph2:
+        firstNodesGraph2[node] = dj2.run(node, nodeListGraph2, graph2)
+
+
 
 def run_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, failed_node: str) -> None:
     """Run the dijkstras algorithm on:
@@ -122,15 +138,21 @@ def run_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, failed_node
     dj2 = Dijkstra()
 
     #removing the node that failed in this simulated network
-    
-    nodeList.remove(failed_node)
-    nodeListUnchanged = nodeList.copy()
-    
     nodeListGraph2 = list(graph2.nodes)
     firstNodes = dict.fromkeys(nodeList)
     
-
     firstNodesGraph2 = dict.fromkeys(nodeListGraph2)
+    initial_dijkstras(graph, graph2, nodeList, firstNodes, firstNodesGraph2)
+
+    
+    nodeList.remove(failed_node)
+    nodeListGraph2.remove(failed_node)
+    nodeListUnchanged = nodeList.copy()
+    nodeListUnchanged2 = nodeListGraph2.copy()
+    
+    
+
+    
     
     start_time = time.time()
     #removing the failed node from the graph
@@ -138,7 +160,7 @@ def run_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, failed_node
 
     ##testing strategy 1
     for node in nodeList:
-        firstNodes[node], time_lists1 = dj1.run(node, nodeList, graph)
+        firstNodes[node] = dj1.run(node, nodeList, graph)
     end_time = time.time()
     elapsed_time1 = end_time - start_time
     print(f'For Strat 1: {firstNodes}')
@@ -151,24 +173,20 @@ def run_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, failed_node
     #get adjacent nodes to that failed node
     
     start_time = time.time()
+    
     adjacent_nodes = nx.neighbors(graph2, failed_node)
+    graph2.remove_node(failed_node)
     for node in adjacent_nodes:
-        firstNodesGraph2[node], time_lists2 = dj2.run(node, nodeListGraph2, graph2)
+        firstNodesGraph2[node] = dj2.run(node, nodeListGraph2, graph2)
     end_time = time.time()
     elapsed_time2 = end_time - start_time
     print(f'For Strat 2: {firstNodesGraph2}')
     print(f'Elapsed Time: {elapsed_time2}')
     
-    plt.figure()
-    plt.plot(time_lists1, label='Strategy 1')
-    plt.plot(time_lists2, label='Strategy 2')
-    plt.ylabel('Packet Times')
-    plt.title('Packet Time Simulator')
-    plt.legend(['Strategy 1', 'Strategy 2'])
-    plt.savefig("simulated_packet_times.png")
-    plt.show()
-
     
+
+    time_lists1 = []
+    time_lists2 = []
     source = random.choice(nodeListUnchanged)
     destination = random.choice(nodeListUnchanged)
     print(source, destination)
@@ -178,18 +196,54 @@ def run_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, failed_node
     print(firstNodes)
     while(current_node != destination):
         if firstNodes[source] != None:
-            next_node = firstNodes[source][destination]
+            print(current_node)
+            next_node = firstNodes[current_node][destination]
+            print(next_node)
             weight = graph.get_edge_data(current_node, next_node)
+            print(weight)
             weight_total += int(weight['weight'])
+            time_lists1.append(int(weight['weight']))
             current_node = next_node
-            time.sleep(weight_total*0.01)
             print(weight_total)
-
+    time.sleep(weight_total*0.5)
     print(weight_total)
     end_time = time.time()
 
     elapsed_time1 = end_time - start_time
+
+    
+    print(source, destination)
+    start_time = time.time()
+    current_node = source
+    weight_total = 0
+    print(firstNodesGraph2)
+    while(current_node != destination):
+        if firstNodesGraph2[source] != None:
+            print(current_node)
+            next_node = firstNodesGraph2[current_node][destination]
+            print(next_node)
+            weight = graph2.get_edge_data(current_node, next_node)
+            
+            weight_total += int(weight['weight'])
+            time_lists2.append(int(weight['weight']))
+            current_node = next_node
+            print(weight_total)
+    time.sleep(weight_total*0.5)
+    print(weight_total)
+    end_time = time.time()
+
+    elapsed_time2 = end_time - start_time
     print(f'Elapsed first strategy time: {elapsed_time1}')
+    print(f'Elapsed second strategy time: {elapsed_time2}')
+    plt.figure()
+    plt.plot(time_lists1, label='Strategy 1')
+    plt.plot(time_lists2, label='Strategy 2')
+    plt.ylabel('Packet Times')
+    plt.title('Packet Time Simulator')
+    plt.legend(['Strategy 1', 'Strategy 2'])
+    plt.savefig("simulated_packet_times.png")
+    plt.show()
+
 
 
 

@@ -28,9 +28,9 @@ class Dijkstra(object):
     self.shortest_paths = None
     
     self.source = pSource   #insert parameters' data in members
-    self.unvisited = pUnvisited
+    self.unvisited = pUnvisited.copy()
     self.shortest_nodes = dict.fromkeys(pUnvisited)
-    self.shortest_paths = dict.fromkeys(pUnvisited, float("inf")) #10000 is infinity for our purposes
+    self.shortest_paths = dict.fromkeys(pUnvisited, float("inf"))
     self.shortest_nodes[self.source] = self.source
     self.shortest_paths[self.source] = 0
     current_node = self.source
@@ -55,7 +55,7 @@ class Dijkstra(object):
       current_node = next_node
       
     #take a currently unvisited node whose path is the shortest and call adjacent_nodes, removes node from unvisited list
-    return self.shortest_nodes, self.packet_times #to save on memory, the algorithm only returns the first node in the path to any destination
+    return self.shortest_nodes #to save on memory, the algorithm only returns the first node in the path to any destination
       
   def adjacent_nodes(self, node, graph):
    
@@ -72,6 +72,8 @@ class Dijkstra(object):
   def compare_costs(self, source, neighbor, graph):
     #get the weights of the edge between nodes
     weight = graph.get_edge_data(source, neighbor)
+    if(weight == None):
+        weight = graph.get_edge_data(neighbor, source)
 
     #calculating added costs
     added_cost = self.shortest_paths[source] + int(weight['weight'])
@@ -80,10 +82,9 @@ class Dijkstra(object):
       self.shortest_paths[neighbor] = added_cost
       
       self.packet_times.append(added_cost*0.01)
-
-      time.sleep(added_cost*0.01)
+      
       if neighbor in nx.neighbors(graph, self.source):
         self.shortest_nodes[neighbor] = neighbor
       else:
-        self.shortest_nodes[neighbor] = self.shortest_paths[source]
+        self.shortest_nodes[neighbor] = self.shortest_nodes[source]
     
