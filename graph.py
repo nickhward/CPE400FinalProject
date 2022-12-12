@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import List
 from Dijkstra import Dijkstra
+import time
+
 
 import csv
 
@@ -116,7 +118,8 @@ def run_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, failed_node
         failed_node (str): node that failed in the simulated network
     """
     #calling dijkstra class
-    dj = Dijkstra()
+    dj1 = Dijkstra()
+    dj2 = Dijkstra()
 
     #removing the node that failed in this simulated network
     nodeList.remove(failed_node)
@@ -125,26 +128,41 @@ def run_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, failed_node
 
     firstNodesGraph2 = dict.fromkeys(nodeListGraph2)
     
-
-    #graph_new = graph
+    start_time = time.time()
+    #removing the failed node from the graph
     graph.remove_node(failed_node)
 
     ##testing strategy 1
     for node in nodeList:
-        print(node)
-        firstNodes[node] = dj.run(node, nodeList, graph)
-    
+        firstNodes[node], time_lists1 = dj1.run(node, nodeList, graph)
+    end_time = time.time()
+    elapsed_time1 = end_time - start_time
     print(f'For Strat 1: {firstNodes}')
+    print(f'Elapsed Time: {elapsed_time1}')
     print('--------------------------------------')
-
+   # print(time_lists1)
+    
     firstNodes.clear()
     #testing strategy 2
     #get adjacent nodes to that failed node
+    
+    start_time = time.time()
     adjacent_nodes = nx.neighbors(graph2, failed_node)
     for node in adjacent_nodes:
-        firstNodesGraph2[node] = dj.run(node, nodeListGraph2, graph2)
-    
+        firstNodesGraph2[node], time_lists2 = dj2.run(node, nodeListGraph2, graph2)
+    end_time = time.time()
+    elapsed_time2 = end_time - start_time
     print(f'For Strat 2: {firstNodesGraph2}')
+    print(f'Elapsed Time: {elapsed_time2}')
+    
+    plt.figure()
+    plt.plot(time_lists1, label='Strategy 1')
+    plt.plot(time_lists2, label='Strategy 2')
+    plt.ylabel('Packet Times')
+    plt.title('Packet Time Simulator')
+    plt.legend(['Strategy 1', 'Strategy 2'])
+    plt.savefig("simulated_packet_times.png")
+    plt.show()
 
 def main():
     """Create graphs by pulling node and weight data from csv, save graph to png"""
