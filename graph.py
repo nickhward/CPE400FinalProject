@@ -122,9 +122,13 @@ def run_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, failed_node
     dj2 = Dijkstra()
 
     #removing the node that failed in this simulated network
+    
     nodeList.remove(failed_node)
+    nodeListUnchanged = nodeList.copy()
+    
     nodeListGraph2 = list(graph2.nodes)
     firstNodes = dict.fromkeys(nodeList)
+    
 
     firstNodesGraph2 = dict.fromkeys(nodeListGraph2)
     
@@ -142,7 +146,7 @@ def run_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, failed_node
     print('--------------------------------------')
    # print(time_lists1)
     
-    firstNodes.clear()
+    #firstNodes.clear()
     #testing strategy 2
     #get adjacent nodes to that failed node
     
@@ -163,6 +167,34 @@ def run_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, failed_node
     plt.legend(['Strategy 1', 'Strategy 2'])
     plt.savefig("simulated_packet_times.png")
     plt.show()
+
+    
+    source = random.choice(nodeListUnchanged)
+    destination = random.choice(nodeListUnchanged)
+    print(source, destination)
+    start_time = time.time()
+    current_node = source
+    weight_total = 0
+    print(firstNodes)
+    while(current_node != destination):
+        if firstNodes[source] != None:
+            next_node = firstNodes[source][destination]
+            weight = graph.get_edge_data(current_node, next_node)
+            weight_total += int(weight['weight'])
+            current_node = next_node
+            time.sleep(weight_total*0.01)
+            print(weight_total)
+
+    print(weight_total)
+    end_time = time.time()
+
+    elapsed_time1 = end_time - start_time
+    print(f'Elapsed first strategy time: {elapsed_time1}')
+
+
+
+
+
 
 def main():
     """Create graphs by pulling node and weight data from csv, save graph to png"""

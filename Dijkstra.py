@@ -26,7 +26,6 @@ class Dijkstra(object):
     self.unvisited = None
     self.shortest_nodes = None
     self.shortest_paths = None
-    #self.packet_times = []
     
     self.source = pSource   #insert parameters' data in members
     self.unvisited = pUnvisited
@@ -55,8 +54,7 @@ class Dijkstra(object):
       if len(self.unvisited) != 0: nodes_to_check.remove(next_node)
       current_node = next_node
       
-      #take a currently unvisited node whose path is the shortest and call adjacent_nodes, removes node from unvisited list
-    print(self.packet_times)
+    #take a currently unvisited node whose path is the shortest and call adjacent_nodes, removes node from unvisited list
     return self.shortest_nodes, self.packet_times #to save on memory, the algorithm only returns the first node in the path to any destination
       
   def adjacent_nodes(self, node, graph):
@@ -81,9 +79,9 @@ class Dijkstra(object):
     if( added_cost < self.shortest_paths[neighbor]):
       self.shortest_paths[neighbor] = added_cost
       
-      self.packet_times.append(added_cost*0.1)
+      self.packet_times.append(added_cost*0.01)
 
-      time.sleep(added_cost*0.1)
+      time.sleep(added_cost*0.01)
       if neighbor in nx.neighbors(graph, self.source):
         self.shortest_nodes[neighbor] = neighbor
       else:
