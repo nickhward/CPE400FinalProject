@@ -44,7 +44,7 @@ class Dijkstra(object):
         if x in self.unvisited:
           nodes_to_check.append(x)
       next_path = float("inf")
-      next_node = 'A'
+      next_node = 1
       for y in nodes_to_check:
         
         if(self.shortest_paths[y] < next_path and y in self.unvisited):
@@ -88,3 +88,4 @@ class Dijkstra(object):
       else:
         self.shortest_nodes[neighbor] = self.shortest_nodes[source]
     
+
