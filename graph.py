@@ -290,7 +290,7 @@ def main():
     G = nx.Graph()
     graph2 = nx.Graph()
     
-    nodes = 200
+    nodes = 100
     failures = [random.uniform(0.1, 1.0) for _ in range(nodes)]
 
     
