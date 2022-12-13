@@ -1,5 +1,5 @@
 import networkx as nx
-import matplotlib.pyplot as plt #for displaying graph
+import matplotlib.pyplot as plt 
 import sys
 import random
 import numpy as np
@@ -23,19 +23,14 @@ def mainMenu(graph: nx.Graph, graph2: nx.Graph, failures: List) -> None:
         failures (List): list of node failure values
     """
     
-    #print("Hello!\n What would you like to do?")
-    #print("Press 1 for Run simulation")
-    #print("Press 2 for Exit")
-    #user = input("Hello! What would you like to do?")
+    
     while (True):
         print("Press 1 for Run simulation")
         print("Press 2 for Exit")
         user = input("Hello! What would you like to do?")
 
-            #continue
         if user == "1":
             #call the simulation           
-            print("User chose 1")
             simulation(graph, graph2, failures)
         elif user == "2":
             sys.exit("Bye!")
@@ -43,8 +38,7 @@ def mainMenu(graph: nx.Graph, graph2: nx.Graph, failures: List) -> None:
         else:
             print("Please enter 1 or 2")
 
-    #user = input("Response: ")
-    #spring_layout = a dictionary where the nodes are the keys and their positions are values
+   
     
  
 def simulation(graph: nx.Graph, graph2: nx.Graph, failures: List):
@@ -55,14 +49,13 @@ def simulation(graph: nx.Graph, graph2: nx.Graph, failures: List):
         graph2 (nx.Graph) : graph of strategy 2
         failures (List): list of node failures
     """
-    print("Inside of simulation")
+    
     randomFailures = []
     i =0
     #Randomly Generating failures between 0 and 1 for each node
     #------------------------------------------
     while i < len(failures):
         fail = random.uniform(0,1)
-        #print("Fail " , i , ": ", fail)
         randomFailures.append(fail)
         i += 1
     print("Random Failures array: ", randomFailures)
@@ -72,14 +65,10 @@ def simulation(graph: nx.Graph, graph2: nx.Graph, failures: List):
     #-------------------------------------------------------------------------------------------------------------------------------------------------
     deleteIndex = []
     for x, y in zip(failures, randomFailures):
-        #x = element in failures
-        #y = element in randomFailures
         if y > x:
             deleteIndex.append(randomFailures.index(y))
-            print("The element in failures: ", x)
-            print("The element in random failures: ", y)
+            
 
-    print("List of indices of elements to delete: ", deleteIndex)
     #check if the size of the list of possible to be deleted nodes greater than 1, if so check which one has the largest difference
     differences = []
     if len(deleteIndex) > 1:
@@ -90,7 +79,7 @@ def simulation(graph: nx.Graph, graph2: nx.Graph, failures: List):
         print("Differences: ", differences)
         #finding largest difference and storing its index to use to get node supposed to delete from graph
         idx = differences.index(max(differences))
-        print("Want index of the largest difference: ", idx)
+        
 
     else:
         #means there was only one node in the graph who's random failure was greater than their initital
@@ -102,11 +91,8 @@ def simulation(graph: nx.Graph, graph2: nx.Graph, failures: List):
 
     failed_node = nodeList[idx]
     print("Node want to delete: ", failed_node)
-    #removing node
-    #graph.remove_node(node)
-
-    #printing new graph with removed node
-    #***ADD HERE HOW TO RECONNECT GRAPH WITH DIJKSTRA and will print the graph with node removed and it being reconnected***
+    print("\nNode want to delete's difference between failure and its randomly generated failure: ", max(differences) )
+    
 
     run_dijkstras(graph, graph2, nodeList, failed_node)
 
@@ -169,10 +155,7 @@ def run_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, failed_node
     print(f'For Strat 1: {firstNodes}')
     print(f'Elapsed Time: {elapsed_time1}')
     print('--------------------------------------')
-   # print(time_lists1)
-    
-    #firstNodes.clear()
-    #testing strategy 2
+   
     #get adjacent nodes to that failed node
     
     start_time = time.time()
@@ -285,8 +268,6 @@ def gnp_random_connected_graph(n, p):
 
 def main():
     """Create graphs by pulling node and weight data from csv, save graph to png"""
-    print("In main")
-    #creating an empty graph
     G = nx.Graph()
     graph2 = nx.Graph()
     
@@ -313,7 +294,6 @@ def main():
     #saving graph image to project directory
     plt.savefig("simulated_graph.png")
 
-    #call the main menu
     mainMenu(G, graph2, failures)
 
 
