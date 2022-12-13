@@ -255,9 +255,9 @@ def run_dijkstras(graph: nx.Graph, graph2: nx.Graph, nodeList: List, failed_node
 
 def gnp_random_connected_graph(n, p):
     """
-    Generates a random undirected graph, similarly to an Erdős-Rényi 
-    graph, but enforcing that the resulting graph is conneted
+    Creates a random undirected graph making sure that the resulting graph is conneted
     """
+    #creates combinations of different connections between nodes
     edges = combinations(range(n), 2)
     G = nx.Graph()
     G.add_nodes_from(range(n))
@@ -268,9 +268,11 @@ def gnp_random_connected_graph(n, p):
     for _, node_edges in groupby(edges, key=lambda x: x[0]):
         node_edges = list(node_edges)
         random_edge = random.choice(node_edges)
+        #adds an edge with a random weight on the edge between 1 to 50
         G.add_edge(*random_edge, weight=random.uniform(1,50))
         for e in node_edges:
             if random.random() < p:
+                #adds an edge with a random weight on the edge between 1 to 50
                 G.add_edge(*e, weight=random.uniform(1,50))
     return G
 
@@ -287,9 +289,6 @@ def main():
     #creating an empty graph
     G = nx.Graph()
     graph2 = nx.Graph()
-    #array of failure percentages
-    #failures = [.05, .2, .45, .5, .03, .18, .56, .63, .32, .11, .60, .23, .79, .85, 0.9, .39,.44, .33, .67,.71,.13,.26,.79,.82,.51,.61]
-    #nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P','Q','R','S','T','U','V','W','X','Y','Z']
     
     nodes = 200
     failures = [random.uniform(0.1, 1.0) for _ in range(nodes)]
@@ -304,16 +303,6 @@ def main():
     nx.draw(G, node_color='lightblue', 
         with_labels=True, 
         node_size=500)
-    #Base graph with added edges and weights--> P = destination for dijkstra
-
-    #for node in nodes:
-     #   G.add_node(node)
-    #get node data from csv file
-    #with open('graphVals.csv', 'r') as file:
-     #   csvreader = csv.reader(file)
-      #  for row in csvreader:
-       #     G.add_edge(row[0], row[1], weight=row[2])
-        #    graph2.add_edge(row[0], row[1], weight=row[2])
 
     #drawing a graph using the networkx library from the pulled csv file
     pos=nx.spring_layout(G)
